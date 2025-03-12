@@ -22,7 +22,7 @@ contract CrowdFund is Initializable {
 
     address public protocolWallet;
 
-    event CampaignCreated(uint indexed campaignId, address indexed owner, string title, uint target);
+    event CampaignCreated(uint indexed campaignId, string dataId, address indexed owner, string title, uint target);
 
     event Donated(uint indexed campaignId, address indexed donor, uint amount);
 
@@ -41,9 +41,8 @@ contract CrowdFund is Initializable {
         protocolWallet = protocolWallet_;
     }
 
-    function createCampaign(string memory _title, string memory _dataId, uint _target, uint _duration) external {
+    function createCampaign(string memory _title, string memory _dataId, uint _target) external {
         require(_target > 0, "target must be greater than zero");
-        require(_duration > 0, "Duration must be positive");
 
         campaignCount++;
         Campaign storage newCampaign = campaigns[campaignCount];
@@ -52,7 +51,7 @@ contract CrowdFund is Initializable {
         newCampaign.dataId = _dataId;
         newCampaign.target = _target;
 
-        emit CampaignCreated(campaignCount, msg.sender, _title, _target);
+        emit CampaignCreated(campaignCount, _dataId, msg.sender, _title, _target);
     }
 
     function donate(uint _id) external payable {
