@@ -1,11 +1,9 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 
-import img1 from "../../assets/1.jpeg";
+import { formatEther } from "viem";
 
-import { Address, formatEther, formatUnits } from "viem";
-import { truncateAddress } from "@/app/utils/helpers";
 import { useParams } from "next/navigation";
 import { PageWrapper } from "@/app/components/PageWrapper";
 import { AmountInput } from "@/app/components/AmountInput";
@@ -14,78 +12,14 @@ import { CircularProgressBar } from "@/app/components/CircularProgressBar";
 import { useGetCampaign } from "../hook/useGetCampaign";
 import { useGetCampaignData } from "@/app/services/campaign/getCampaig";
 import { CollapsibleParagraph } from "@/app/components/CollapsibleParagraph";
-
-interface CampaignData {
-  title: string;
-  description: string;
-  goal: number;
-  currentAmount: number;
-  deadline: Date;
-  creator: Address;
-}
-
-interface CopyableAddressProps {
-  address: Address;
-}
-
-const CopyableAddress = ({ address }: CopyableAddressProps) => {
-  const [copied, setCopied] = useState(false);
-
-  return (
-    <span
-      onClick={() => {
-        navigator.clipboard.writeText(address);
-        setCopied(true);
-        setTimeout(() => setCopied(false), 2000);
-      }}
-      className="text-sm ml-1 cursor-pointer flex flex-col transition-all duration-500"
-    >
-      <span>
-        {truncateAddress(address)}
-        <button
-          className="ml-2 text-blue-500 hover:text-blue-700"
-          aria-label="Copy Address"
-        >
-          {copied ? (
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="16"
-              height="16"
-              fill="currentColor"
-              className="bi bi-clipboard-check"
-              viewBox="0 0 16 16"
-            >
-              <path
-                fillRule="evenodd"
-                d="M10.854 7.146a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 1 1 .708-.708L7.5 9.793l2.646-2.647a.5.5 0 0 1 .708 0"
-              />
-              <path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1z" />
-              <path d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5zm-3-1A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0z" />
-            </svg>
-          ) : (
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="16"
-              height="16"
-              fill="currentColor"
-              className="bi bi-clipboard"
-              viewBox="0 0 16 16"
-            >
-              <path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1z" />
-              <path d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5zm-3-1A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0z" />
-            </svg>
-          )}
-        </button>
-      </span>
-    </span>
-  );
-};
+import { CopyableAddress } from "@/app/components/CopyableAddress";
+import { useBalance, useAccount } from "wagmi";
+import { useDonate } from "../hook/useDonate";
 
 const Campaign: React.FC = () => {
   const { id } = useParams();
-
-  const [campaign, setCampaign] = useState<CampaignData | null>(null);
-  const [loading, setLoading] = useState(true);
+  const { address } = useAccount();
+  const [amount, setAmount] = useState<bigint>(0n);
 
   const {
     campaign: campaignData,
@@ -99,47 +33,19 @@ const Campaign: React.FC = () => {
     error: isDataError,
   } = useGetCampaignData(campaignData?.dataId ?? "");
 
-  console.log("campaignData", campaignData);
+  const {
+    data: balance,
+    isLoading: isBalanceLoading,
+    isError,
+  } = useBalance({
+    address: address,
+  });
 
-  useEffect(() => {
-    const fetchCampaignData = async () => {
-      try {
-        // TODO: Replace with actual API call
-        const mockData: CampaignData = {
-          title: "Christopher potter",
-          description: "This is a sample campaign description",
-          goal: 1000,
-          currentAmount: 500,
-          deadline: new Date("2024-12-31"),
-          creator: "0x742d35Cc6634C0532925a3b844Bc454e4438f44e",
-        };
-
-        setCampaign(mockData);
-        setLoading(false);
-      } catch (error) {
-        console.error("Error fetching campaign:", error);
-        setLoading(false);
-      }
-    };
-
-    fetchCampaignData();
-  }, [id]);
-
-  if (loading) {
-    return (
-      <div className="flex justify-center items-center min-h-[80vh]">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
-      </div>
-    );
-  }
-
-  if (!campaign) {
-    return (
-      <div className="container mx-auto px-4">
-        <h5 className="text-red-500 text-xl font-medium">Campaign not found</h5>
-      </div>
-    );
-  }
+  const {
+    donate,
+    isLoading: isDonateLoading,
+    isError: isDonateError,
+  } = useDonate();
 
   return (
     <PageWrapper>
@@ -227,8 +133,11 @@ const Campaign: React.FC = () => {
               <p className="text-left flex flex-col ">
                 <span>Lukso</span>
                 <span className="text-sm">
-                  {Number(formatEther(4000n)).toFixed(2)} ~ $
-                  {Number(formatUnits(3022n, 6)).toFixed(2)}
+                  {balance
+                    ? Number(formatEther(balance.value)).toFixed(2)
+                    : "0.00"}
+                  {/* ~ $
+                  {Number(formatUnits(3022n, 6)).toFixed(2)} */}
                 </span>
               </p>
             </div>
@@ -236,14 +145,18 @@ const Campaign: React.FC = () => {
               amount={0n}
               decimals={18}
               onAmountChangeAction={(amount: bigint) => {
-                // Handle amount change
+                setAmount(amount);
               }}
-              max={1000n}
+              max={balance ? balance.value : 0n}
               min={0n}
             />
           </div>
           <Button
             type="submit"
+            onPress={async () => {
+              await donate(typeof id === "string" ? BigInt(id) : 0n, amount);
+            }}
+            isLoading={isDonateLoading}
             className="w-full bg-pink-600 text-white font-semibold py-4 px-4 rounded-md  focus:outline-none mt-6 mb-4  cursor-pointer"
           >
             Donate
