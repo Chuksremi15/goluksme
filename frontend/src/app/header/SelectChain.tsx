@@ -37,6 +37,7 @@ export const SelectChain = () => {
           <DropdownTrigger>
             <Button
               className="capitalize px-8 border border-black text-black rounded-full"
+              size="sm"
               color={"default"}
               variant={"bordered"}
             >

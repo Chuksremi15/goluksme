@@ -5,7 +5,6 @@ import { Spinner } from "@heroui/react";
 import { useGetCampaignData } from "../services/campaign/getCampaig";
 
 export interface CampaignEvent {
-  campaignId: bigint;
   owner: Address;
   title: string;
   dataId: string;
@@ -21,7 +20,8 @@ export const FundraiserCard: React.FC<FundraiserCardProps> = ({ campaign }) => {
     campaign: campaignData,
     isLoading,
     error,
-  } = useGetCampaign(campaign.campaignId);
+    isError,
+  } = useGetCampaign(campaign.owner);
 
   const {
     data,
@@ -35,10 +35,10 @@ export const FundraiserCard: React.FC<FundraiserCardProps> = ({ campaign }) => {
         <div className="flex h-[200px] items-center justify-center py-4 text-pink-500">
           <Spinner />
         </div>
-      ) : error || !data ? (
+      ) : isError || !data || campaignData?.dataId != data._id ? (
         <></>
       ) : (
-        <Link href={`/campaign/${campaign.campaignId}`} className="block">
+        <Link href={`/campaign/${campaign.owner}`} className="block">
           <div className="max-w-[200px] rounded-xl overflow-hidden border border-gray-200 shadow hover:shadow-lg transition-all duration-300">
             <img
               src={data.imgurl}
@@ -55,7 +55,8 @@ export const FundraiserCard: React.FC<FundraiserCardProps> = ({ campaign }) => {
                     Raised
                   </span>
                   <span className="text-sm font-medium text-gray-700">
-                    {campaignData && formatEther(campaignData.fundsRaised)} LKS
+                    {campaignData && formatEther(campaignData.totalDonations)}{" "}
+                    LYS
                   </span>
                 </div>
                 <div className="flex justify-between">
@@ -63,7 +64,7 @@ export const FundraiserCard: React.FC<FundraiserCardProps> = ({ campaign }) => {
                     Target
                   </span>
                   <span className="text-sm font-medium text-gray-700">
-                    {campaignData && formatEther(campaignData.target)} LKS
+                    {campaignData && formatEther(campaignData.target)} LYS
                   </span>
                 </div>
                 <div className="w-full bg-gray-200 rounded-full h-2.5">
@@ -71,7 +72,13 @@ export const FundraiserCard: React.FC<FundraiserCardProps> = ({ campaign }) => {
                     <div
                       className="bg-pink-500 h-2.5 rounded-full"
                       style={{
-                        width: `${(campaignData.fundsRaised / campaignData.target) * 100n}%`,
+                        width: `${Math.min(
+                          Number(
+                            (campaignData.totalDonations * 100n) /
+                              campaignData.target
+                          ),
+                          100
+                        )}%`,
                       }}
                     />
                   )}

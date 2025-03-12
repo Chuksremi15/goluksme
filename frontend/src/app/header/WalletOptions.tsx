@@ -12,6 +12,7 @@ export function WalletOptions() {
     <div>
       <Button
         onPress={onOpen}
+        size="sm"
         className="ml-auto bg-white text-black flex font-medium justify-center items-center text-sm border px-4 font-body rounded-full border-gray-400 max-w-[150px] hover:bg-gray-200 cursor-pointer transition-all duration-500"
       >
         Connect Wallet

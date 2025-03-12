@@ -13,6 +13,7 @@ import { notification } from "../components/utils/Notification";
 import { useAccount } from "wagmi";
 import { useCreateCampaign } from "../campaign/hook/useCreateCampaign";
 import { formatEther, parseEther } from "viem";
+import { useRouter } from "next/navigation";
 
 const FormError = ({ message }: { message: string }) => {
   return (
@@ -27,6 +28,8 @@ const Create = () => {
   const { address, isConnected } = useAccount();
 
   const { createCampaign, isLoading, isError, isSuccess } = useCreateCampaign();
+
+  const router = useRouter();
 
   const formik = useFormik({
     initialValues: {
@@ -79,7 +82,11 @@ const Create = () => {
           const parsedTarget = parseEther(target);
           const title = prop.title;
 
-          await createCampaign(title, dataId, parsedTarget);
+          const trxHash = await createCampaign(title, dataId, parsedTarget);
+
+          if (trxHash) {
+            router.replace(`/campaign/${address}`);
+          }
         }
       } catch (error) {
         if (error instanceof Error) {

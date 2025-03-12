@@ -12,11 +12,13 @@ const page = () => {
 
   const { data, isLoading, error } = useEventHistory({
     eventName: "CampaignCreated",
-    fromBlock: currentBlock ? 11895839n : 0n,
+    fromBlock: 1n,
     blockData: true,
     transactionData: true,
     receiptData: true,
   });
+
+  console.log("data", data);
 
   const [campaigns, setCampaigns] = useState<CampaignEvent[]>([]);
 
@@ -44,11 +46,13 @@ const page = () => {
           <Spinner />
         </div>
       ) : error ? (
-        <div>Can not fetch at the moment</div>
+        <div className="flex text-red justify-center items-center mt-20">
+          Can not fetch at the moment
+        </div>
       ) : (
         <div className="grid grid-cols-2 gap-4 pt-4">
           {campaigns.map((campaign, index) => (
-            <FundraiserCard campaign={campaign} />
+            <FundraiserCard campaign={campaign} key={index} />
           ))}
         </div>
       )}

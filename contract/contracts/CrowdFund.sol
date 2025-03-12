@@ -7,128 +7,142 @@ contract CrowdFund is Initializable {
     struct Campaign {
         address owner;
         string title;
-        string id;
         string dataId;
         uint target;
-        uint deadline;
-        uint fundsRaised;
-        bool withdrawn;
-        mapping(address => uint) donations;
+        uint totalDonations;
+        uint totalWithdrawn;
+        uint donationCount;
     }
 
-    uint public campaignCount;
-
-    mapping(uint => Campaign) public campaigns;
+    mapping(address => Campaign) public campaigns;
 
     address public protocolWallet;
 
-    event CampaignCreated(uint indexed campaignId, string dataId, address indexed owner, string title, uint target);
+    event CampaignCreated(string dataId, address indexed owner, string title, uint target);
+    event CampaignClosed(
+        address indexed owner,
+        string title,
+        string dataId,
+        uint target,
+        uint totalDonations,
+        uint totalWithdrawn
+    );
+    event Donated(address indexed owner, address indexed donor, uint amount);
+    event Withdrawn(address indexed owner, uint amount);
 
-    event Donated(uint indexed campaignId, address indexed donor, uint amount);
-
-    event Withdrawn(uint indexed campaignId, address indexed owner, uint amount);
-
-    event Refunded(uint indexed campaignId, address indexed donor, uint amount);
-
-    modifier onlyOwner(uint _id) {
-        require(msg.sender == campaigns[_id].owner, "Not campaign owner");
-        _;
-    }
-
-    /// @notice Initializes the loan factory contract
-    /// @param protocolWallet_ Protocol wallet address
     function initialize(address protocolWallet_) public initializer {
         protocolWallet = protocolWallet_;
     }
 
     function createCampaign(string memory _title, string memory _dataId, uint _target) external {
-        require(_target > 0, "target must be greater than zero");
+        require(campaigns[msg.sender].owner == address(0), "You already have a campaign");
 
-        campaignCount++;
-        Campaign storage newCampaign = campaigns[campaignCount];
+        require(bytes(_title).length > 0, "Title cannot be empty");
+        require(bytes(_dataId).length > 0, "Data ID cannot be empty");
+        require(_target > 0, "Target must be greater than zero");
+
+        Campaign storage newCampaign = campaigns[msg.sender];
         newCampaign.owner = msg.sender;
         newCampaign.title = _title;
         newCampaign.dataId = _dataId;
         newCampaign.target = _target;
+        newCampaign.donationCount = 0;
 
-        emit CampaignCreated(campaignCount, _dataId, msg.sender, _title, _target);
+        emit CampaignCreated(_dataId, msg.sender, _title, _target);
     }
 
-    function donate(uint _id) external payable {
-        Campaign storage campaign = campaigns[_id];
+    function donate(address _owner) external payable {
+        Campaign storage campaign = campaigns[_owner];
+        require(campaign.owner != address(0), "Campaign does not exist");
         require(msg.value > 0, "Must send LKS");
 
-        campaign.fundsRaised += msg.value;
-        campaign.donations[msg.sender] += msg.value;
+        campaign.totalDonations += msg.value;
+        campaign.donationCount++;
 
-        emit Donated(_id, msg.sender, msg.value);
+        emit Donated(_owner, msg.sender, msg.value);
     }
 
-    function withdraw(uint _id) external onlyOwner(_id) {
-        Campaign storage campaign = campaigns[_id];
+    function withdraw() external {
+        Campaign storage campaign = campaigns[msg.sender];
+        require(campaign.owner != address(0), "Campaign does not exist");
 
-        uint amount = campaign.fundsRaised;
+        uint amount = campaign.totalDonations - campaign.totalWithdrawn;
 
-        // Calculate 0.03% fee
-        uint fee = (amount * 30) / 10000; // 30 / 10000 = 0.03%
+        require(amount > 0, "cannot withdraw 0");
+
+        uint fee = (amount * 30) / 10000;
         uint amountAfterFee = amount - fee;
 
-        // Reset fundsRaised
-        campaign.fundsRaised = 0;
+        campaign.totalWithdrawn += amount;
 
-        // Send fee to protocol
         (bool feeSent, ) = payable(protocolWallet).call{ value: fee }("");
         require(feeSent, "Failed to send fee");
 
-        // Send remaining amount to campaign owner
         (bool sent, ) = payable(campaign.owner).call{ value: amountAfterFee }("");
         require(sent, "Failed to send funds");
 
-        emit Withdrawn(_id, msg.sender, amount);
+        emit Withdrawn(msg.sender, amount);
     }
 
-    // function refund(uint _id) external {
-    //     Campaign storage campaign = campaigns[_id];
-    //     require(block.timestamp >= campaign.deadline, "Campaign still running");
-    //     require(
-    //         campaign.fundsRaised < campaign.target,
-    //         "target met, no refunds"
-    //     );
+    function closeCampaign() external {
+        Campaign storage campaign = campaigns[msg.sender];
+        require(campaign.owner != address(0), "Campaign does not exist");
 
-    //     uint amount = campaign.donations[msg.sender];
-    //     require(amount > 0, "No donations to refund");
+        uint remainingAmount = campaign.totalDonations - campaign.totalWithdrawn;
+        if (remainingAmount > 0) {
+            uint fee = (remainingAmount * 30) / 10000;
+            uint amountAfterFee = remainingAmount - fee;
 
-    //     campaign.donations[msg.sender] = 0;
-    //     (bool sent, ) = payable(msg.sender).call{value: amount}("");
-    //     require(sent, "Failed to refund");
+            campaign.totalWithdrawn += remainingAmount;
 
-    //     emit Refunded(_id, msg.sender, amount);
-    // }
+            (bool feeSent, ) = payable(protocolWallet).call{ value: fee }("");
+            require(feeSent, "Failed to send fee");
+
+            (bool sent, ) = payable(campaign.owner).call{ value: amountAfterFee }("");
+            require(sent, "Failed to send funds");
+
+            emit Withdrawn(msg.sender, remainingAmount);
+        }
+
+        emit CampaignClosed(
+            msg.sender,
+            campaign.title,
+            campaign.dataId,
+            campaign.target,
+            campaign.totalDonations,
+            campaign.totalWithdrawn
+        );
+
+        delete campaigns[msg.sender];
+    }
 
     function getCampaign(
-        uint _id
+        address _owner
     )
         external
         view
         returns (
             address owner,
             string memory title,
-            string memory description,
+            string memory dataId,
             uint target,
-            uint deadline,
-            uint fundsRaised,
-            bool withdrawn
+            uint totalDonations,
+            uint totalWithdrawn,
+            uint donationCount
         )
     {
-        Campaign storage campaign = campaigns[_id];
+        Campaign storage campaign = campaigns[_owner];
+
+        require(campaign.owner != address(0), "Campaign does not exist");
+
         return (
             campaign.owner,
             campaign.title,
             campaign.dataId,
             campaign.target,
-            campaign.deadline,
-            campaign.fundsRaised,
-            campaign.withdrawn
+            campaign.totalDonations,
+            campaign.totalWithdrawn,
+            campaign.donationCount
         );
     }
 }

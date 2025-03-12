@@ -46,7 +46,7 @@ export function Account() {
   return (
     <Dropdown>
       <DropdownTrigger>
-        <div className="flex gap-x-2 cursor-pointer items-center justify-center border border-gray-400 rounded-full px-2 py-1">
+        <div className="flex gap-x-2 cursor-pointer items-center justify-center border border-gray-400 rounded-full px-2">
           <p className="my-auto text-sm" data-testid="walletAddress">
             {address ? truncateAddress(address) : "Not connected"}
           </p>
@@ -61,7 +61,7 @@ export function Account() {
         <DropdownItem
           onPress={handleDisconnect}
           key="disconect"
-          className="text-danger text-center border border-gray-400 font-body py-2 rounded-full"
+          className="text-danger text-center border border-gray-400 font-body  rounded-full"
         >
           Disconnect
         </DropdownItem>

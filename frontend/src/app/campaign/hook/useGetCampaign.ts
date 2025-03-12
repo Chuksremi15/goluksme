@@ -8,9 +8,9 @@ export interface Campaign {
   title: string;
   dataId: string;
   target: bigint;
-  deadline: bigint;
-  fundsRaised: bigint;
-  withdrawn: boolean;
+  totalDonations: bigint;
+  totalWithdrawn: bigint;
+  donationCount: bigint;
 }
 
 interface UseGetCampaignReturn {
@@ -20,20 +20,28 @@ interface UseGetCampaignReturn {
   isError: boolean;
 }
 
-export function useGetCampaign(id: bigint): UseGetCampaignReturn {
+export function useGetCampaign(owner: Address): UseGetCampaignReturn {
   const contractAddress = useGoLuksMeAddress();
 
   const { data, isLoading, isError, error } = useReadContract({
     address: contractAddress as Address,
     abi: CrowdFundABI,
     functionName: "getCampaign",
-    args: [id],
+    args: [owner],
   }) as {
-    data: [Address, string, string, bigint, bigint, bigint, boolean] | null;
+    data: [Address, string, string, bigint, bigint, bigint, bigint] | null;
     isLoading: boolean;
     isError: boolean;
     error: Error | null;
   };
+
+  if (isError) {
+    if (error instanceof Error) {
+      console.error("Error fetching campaign:", error.message);
+    } else {
+      console.error("Error fetching campaign:", error);
+    }
+  }
 
   // Ensure `data` exists and is an array before mapping
   const campaign: Campaign | null = data
@@ -42,9 +50,9 @@ export function useGetCampaign(id: bigint): UseGetCampaignReturn {
         title: data[1] as string,
         dataId: data[2] as string,
         target: BigInt(data[3]), // Ensure proper bigint handling
-        deadline: BigInt(data[4]),
-        fundsRaised: BigInt(data[5]),
-        withdrawn: Boolean(data[6]),
+        totalDonations: BigInt(data[4]),
+        totalWithdrawn: BigInt(data[5]),
+        donationCount: BigInt(data[6]),
       }
     : null;
 

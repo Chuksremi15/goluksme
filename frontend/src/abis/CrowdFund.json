@@ -4,10 +4,47 @@
     "inputs": [
       {
         "indexed": true,
+        "internalType": "address",
+        "name": "owner",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "title",
+        "type": "string"
+      },
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "dataId",
+        "type": "string"
+      },
+      {
+        "indexed": false,
         "internalType": "uint256",
-        "name": "campaignId",
+        "name": "target",
         "type": "uint256"
       },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "totalDonations",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "totalWithdrawn",
+        "type": "uint256"
+      }
+    ],
+    "name": "CampaignClosed",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
       {
         "indexed": false,
         "internalType": "string",
@@ -41,9 +78,9 @@
     "inputs": [
       {
         "indexed": true,
-        "internalType": "uint256",
-        "name": "campaignId",
-        "type": "uint256"
+        "internalType": "address",
+        "name": "owner",
+        "type": "address"
       },
       {
         "indexed": true,
@@ -66,37 +103,6 @@
     "inputs": [
       {
         "indexed": true,
-        "internalType": "uint256",
-        "name": "campaignId",
-        "type": "uint256"
-      },
-      {
-        "indexed": true,
-        "internalType": "address",
-        "name": "donor",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "amount",
-        "type": "uint256"
-      }
-    ],
-    "name": "Refunded",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": true,
-        "internalType": "uint256",
-        "name": "campaignId",
-        "type": "uint256"
-      },
-      {
-        "indexed": true,
         "internalType": "address",
         "name": "owner",
         "type": "address"
@@ -112,24 +118,11 @@
     "type": "event"
   },
   {
-    "inputs": [],
-    "name": "campaignCount",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
     "inputs": [
       {
-        "internalType": "uint256",
+        "internalType": "address",
         "name": "",
-        "type": "uint256"
+        "type": "address"
       }
     ],
     "name": "campaigns",
@@ -146,11 +139,6 @@
       },
       {
         "internalType": "string",
-        "name": "id",
-        "type": "string"
-      },
-      {
-        "internalType": "string",
         "name": "dataId",
         "type": "string"
       },
@@ -161,21 +149,28 @@
       },
       {
         "internalType": "uint256",
-        "name": "deadline",
+        "name": "totalDonations",
         "type": "uint256"
       },
       {
         "internalType": "uint256",
-        "name": "fundsRaised",
+        "name": "totalWithdrawn",
         "type": "uint256"
       },
       {
-        "internalType": "bool",
-        "name": "withdrawn",
-        "type": "bool"
+        "internalType": "uint256",
+        "name": "donationCount",
+        "type": "uint256"
       }
     ],
     "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "closeCampaign",
+    "outputs": [],
+    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
@@ -204,9 +199,9 @@
   {
     "inputs": [
       {
-        "internalType": "uint256",
-        "name": "_id",
-        "type": "uint256"
+        "internalType": "address",
+        "name": "_owner",
+        "type": "address"
       }
     ],
     "name": "donate",
@@ -217,9 +212,9 @@
   {
     "inputs": [
       {
-        "internalType": "uint256",
-        "name": "_id",
-        "type": "uint256"
+        "internalType": "address",
+        "name": "_owner",
+        "type": "address"
       }
     ],
     "name": "getCampaign",
@@ -236,7 +231,7 @@
       },
       {
         "internalType": "string",
-        "name": "description",
+        "name": "dataId",
         "type": "string"
       },
       {
@@ -246,18 +241,18 @@
       },
       {
         "internalType": "uint256",
-        "name": "deadline",
+        "name": "totalDonations",
         "type": "uint256"
       },
       {
         "internalType": "uint256",
-        "name": "fundsRaised",
+        "name": "totalWithdrawn",
         "type": "uint256"
       },
       {
-        "internalType": "bool",
-        "name": "withdrawn",
-        "type": "bool"
+        "internalType": "uint256",
+        "name": "donationCount",
+        "type": "uint256"
       }
     ],
     "stateMutability": "view",
@@ -290,13 +285,7 @@
     "type": "function"
   },
   {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "_id",
-        "type": "uint256"
-      }
-    ],
+    "inputs": [],
     "name": "withdraw",
     "outputs": [],
     "stateMutability": "nonpayable",

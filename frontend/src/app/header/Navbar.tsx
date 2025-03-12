@@ -4,9 +4,10 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import * as React from "react";
 import { ConnectWallet } from "./ConnectWallet";
-import { useDisconnect } from "wagmi";
+import { useAccount, useDisconnect } from "wagmi";
 import { SelectChain } from "./SelectChain";
 import { Button } from "@heroui/react";
+import Logo from "../assets/logo.svg";
 
 {
   /* <Image
@@ -25,6 +26,7 @@ font-[family-name:var(--font-geist-mono)]
 }
 
 export function Navbar() {
+  const { address } = useAccount();
   const navLinks = [
     {
       linkPath: "/pools",
@@ -53,16 +55,39 @@ export function Navbar() {
   };
 
   return (
-    <div className="w-full flex justify-center items-center gap-x-2 text-black">
-      <div className="flex justify-center items-center gap-x-2">
-        <SelectChain />
-        <ConnectWallet />
+    <div
+      style={{ scrollbarWidth: "none" }}
+      className="w-full  overflow-scroll  "
+    >
+      <div className="w-[700px] flex justify-center items-center gap-x-2 text-black">
+        <Link href="/">
+          <img
+            src={Logo.src}
+            alt="GoluksMe"
+            className="mt-1 cursor-pointer w-28"
+          />
+        </Link>
+        <div className="flex justify-center items-center gap-x-2">
+          <SelectChain />
+          <ConnectWallet />
+        </div>
+        <Link href="/create">
+          <Button
+            size="sm"
+            className="ml-auto bg-white text-black flex font-medium justify-center items-center text-sm border px-4 font-body rounded-full border-gray-400 max-w-[150px] hover:bg-gray-200 cursor-pointer transition-all duration-500"
+          >
+            Start a GoluksMe
+          </Button>
+        </Link>
+        <Link href={`/campaign/${address}`}>
+          <Button
+            size="sm"
+            className="ml-auto  bg-white text-black flex font-medium justify-center items-center text-sm border px-4 font-body rounded-full border-gray-400 max-w-[150px] hover:bg-gray-200 cursor-pointer transition-all duration-500"
+          >
+            My Campaign
+          </Button>
+        </Link>
       </div>
-      <Link href="/create">
-        <Button className="ml-auto bg-white text-black flex font-medium justify-center items-center text-sm border px-4 font-body rounded-full border-gray-400 max-w-[150px] hover:bg-gray-200 cursor-pointer transition-all duration-500">
-          Start a GoluksMe
-        </Button>
-      </Link>
     </div>
   );
 }

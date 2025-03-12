@@ -47,6 +47,8 @@ export const useCreateCampaign = () => {
         setIsSuccess(true);
         setIsError(false);
         setError(null);
+
+        return trxHash;
       }
     } catch (error) {
       setIsLoading(false);

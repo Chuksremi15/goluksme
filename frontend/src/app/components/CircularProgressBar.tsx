@@ -13,9 +13,10 @@ export const CircularProgressBar: React.FC<CircularProgressBarProps> = ({
   color = "text-blue-500",
   label = "",
 }) => {
+  const adjustedPercentage = Math.min(percentage, 100); // Cap at 100%
   const radius = (size - strokeWidth) / 2;
   const circumference = 2 * Math.PI * radius;
-  const offset = circumference - (percentage / 100) * circumference;
+  const offset = circumference - (adjustedPercentage / 100) * circumference;
 
   return (
     <div
