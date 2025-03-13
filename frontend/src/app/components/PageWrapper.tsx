@@ -6,7 +6,7 @@ export const PageWrapper = ({ children }: { children: ReactNode }) => {
     <div className=" relative h-screen  ">
       <div
         style={{ scrollbarWidth: "none" }}
-        className="container h-full overflow-scroll py-4 px-4 mx-auto max-w-[432px] bg-white border border-gray rounded-2xl"
+        className="container h-full overflow-scroll py-4 px-4 mx-auto max-w-[432px] bg-white border border-gray rounded"
       >
         <Navbar />
         {children}
