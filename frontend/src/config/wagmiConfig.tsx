@@ -6,8 +6,8 @@ import { metaMask, walletConnect } from "wagmi/connectors";
 
 const MetaMaskOptions = {
   dappMetadata: {
-    name: "frenFinance",
-    url: "https://frenfinance.com",
+    name: "golyxme",
+    url: "https://golyxme.vercel.app/",
   },
 };
 
