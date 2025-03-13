@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Campaign, useGetCampaign } from "../campaign/hook/useGetCampaign";
+import { useGetCampaign } from "../campaign/hook/useGetCampaign";
 import { Address, formatEther } from "viem";
 import { Spinner } from "@heroui/react";
 import { useGetCampaignData } from "../services/campaign/getCampaig";
@@ -19,15 +19,13 @@ export const FundraiserCard: React.FC<FundraiserCardProps> = ({ campaign }) => {
   const {
     campaign: campaignData,
     isLoading,
-    error,
+
     isError,
   } = useGetCampaign(campaign.owner);
 
-  const {
-    data,
-    isLoading: isDataLoading,
-    error: isDataError,
-  } = useGetCampaignData(campaign.dataId);
+  const { data, isLoading: isDataLoading } = useGetCampaignData(
+    campaign.dataId
+  );
 
   return (
     <>

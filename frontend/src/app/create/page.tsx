@@ -3,31 +3,21 @@
 import { Button } from "@heroui/react";
 import { ImageUploader } from "../components/ImageUploader";
 import { PageWrapper } from "../components/PageWrapper";
-import { Navbar } from "../header/Navbar";
 import * as yup from "yup";
-import { useState } from "react";
 import { ErrorIcon } from "react-hot-toast";
 import { useFormik } from "formik";
 import { createCampaignData } from "../services/campaign/create";
 import { notification } from "../components/utils/Notification";
 import { useAccount } from "wagmi";
 import { useCreateCampaign } from "../campaign/hook/useCreateCampaign";
-import { formatEther, parseEther } from "viem";
+import { parseEther } from "viem";
 import { useRouter } from "next/navigation";
+import { FormError } from "../components/FormError";
 
-const FormError = ({ message }: { message: string }) => {
-  return (
-    <div className="flex items-center mt-2 text-red-500 text-xs font-body font-light transition-all duration-500">
-      <ErrorIcon className="mr-2 h-4 text-red-500 fill-current" />
-      <p>{message}</p>
-    </div>
-  );
-};
-
-const Create = () => {
+const Page = () => {
   const { address, isConnected } = useAccount();
 
-  const { createCampaign, isLoading, isError, isSuccess } = useCreateCampaign();
+  const { createCampaign } = useCreateCampaign();
 
   const router = useRouter();
 
@@ -123,21 +113,6 @@ const Create = () => {
               <FormError message={formik.errors.title} />
             )}
           </div>
-          {/* <div>
-            <label
-              htmlFor="title"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Social Media Link
-            </label>
-            <input
-              type="text"
-              id="title"
-              name="title"
-              className="mt-1 block w-full rounded-md border-gray-400 border  focus:border-pink-500 focus:outline-none focus:shadow-outline p-3 sm:text-sm "
-              placeholder="Enter link to social media post about campaign"
-            />
-          </div> */}
 
           <div>
             <label
@@ -206,4 +181,4 @@ const Create = () => {
   );
 };
 
-export default Create;
+export default Page;

@@ -1,17 +1,23 @@
 import { useState } from "react";
-import CrowdFundABI from "@/abis/CrowdFund.json";
 import { useAccount, usePublicClient, useWriteContract } from "wagmi";
-import { Address } from "viem";
-
-import useGoLuksMeAddress from "@/app/hook/useGoLuksMeAddress";
 import { useTransactor } from "@/app/hook/useTransactor";
 import { notification } from "@/app/components/utils/Notification";
+import deployedContracts from "../../../../contracts/deployedContracts";
+import { GenericContractsDeclaration } from "@/utils/scaffold-eth/contract";
+import { hardhat } from "viem/chains";
+import { Address } from "viem";
 
 export const useWithdraw = () => {
   const { writeContractAsync } = useWriteContract();
   const { result: writeTxn, isLoading: isTransactorLoading } = useTransactor();
   const publicClient = usePublicClient();
-  const contractAddress = useGoLuksMeAddress();
+
+  const contracts = deployedContracts as GenericContractsDeclaration | null;
+  const chainId = hardhat.id;
+  const deployedContractsOnChain = contracts ? contracts[chainId] : {};
+  const contract = deployedContractsOnChain["CrowdFund"];
+  const contractAddress = contract.address;
+
   const { address } = useAccount();
 
   const [isWithdrawLoading, setIsLoading] = useState(false);
@@ -28,7 +34,7 @@ export const useWithdraw = () => {
       setIsLoading(true);
       const { request } = await publicClient.simulateContract({
         address: contractAddress as Address,
-        abi: CrowdFundABI,
+        abi: contract.abi,
         functionName: "withdraw",
         account: address,
       });

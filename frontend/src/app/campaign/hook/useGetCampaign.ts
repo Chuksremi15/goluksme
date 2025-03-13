@@ -1,7 +1,8 @@
 import { Address } from "viem";
 import { useReadContract } from "wagmi";
-import useGoLuksMeAddress from "@/app/hook/useGoLuksMeAddress";
-import CrowdFundABI from "@/abis/CrowdFund.json";
+import { hardhat } from "viem/chains";
+import deployedContracts from "../../../../contracts/deployedContracts";
+import { GenericContractsDeclaration } from "@/utils/scaffold-eth/contract";
 
 export interface Campaign {
   owner: Address;
@@ -21,11 +22,15 @@ interface UseGetCampaignReturn {
 }
 
 export function useGetCampaign(owner: Address): UseGetCampaignReturn {
-  const contractAddress = useGoLuksMeAddress();
+  const contracts = deployedContracts as GenericContractsDeclaration | null;
+  const chainId = hardhat.id;
+  const deployedContractsOnChain = contracts ? contracts[chainId] : {};
+  const contract = deployedContractsOnChain["CrowdFund"];
+  const contractAddress = contract.address;
 
   const { data, isLoading, isError, error } = useReadContract({
     address: contractAddress as Address,
-    abi: CrowdFundABI,
+    abi: contract.abi,
     functionName: "getCampaign",
     args: [owner],
   }) as {

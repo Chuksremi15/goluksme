@@ -1,7 +1,6 @@
 "use client";
 
 import {
-  Button,
   Dropdown,
   DropdownItem,
   DropdownMenu,
@@ -24,7 +23,9 @@ export function Account() {
       try {
         await axios.post("/api/auth/login/", { address });
         // Store the JWT in a cookie
-      } catch (error) {}
+      } catch (error) {
+        console.error("Error logging in:", error);
+      }
     };
     if (address) {
       login();
@@ -34,7 +35,9 @@ export function Account() {
   const logout = async () => {
     try {
       await axios.post("/api/auth/logout/");
-    } catch (error) {}
+    } catch (error) {
+      console.error("Error logging out:", error);
+    }
   };
 
   // Handle disconnect event

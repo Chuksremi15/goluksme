@@ -1,8 +1,10 @@
 import CrowdFundABI from "@/abis/CrowdFund.json";
 import { useEffect, useState } from "react";
-import { Abi, AbiEvent, BlockTag, Hash } from "viem";
+import { Abi, AbiEvent, BlockTag } from "viem";
 import { usePublicClient } from "wagmi";
-import useGoLuksMeAddress from "./useGoLuksMeAddress";
+import deployedContracts from "../../../contracts/deployedContracts";
+import { GenericContractsDeclaration } from "@/utils/scaffold-eth/contract";
+import { hardhat } from "viem/chains";
 
 /**
  * @dev reads events from a deployed contract
@@ -18,7 +20,6 @@ import useGoLuksMeAddress from "./useGoLuksMeAddress";
 export const useEventHistory = ({
   eventName,
   fromBlock,
-  filters,
   blockData,
   transactionData,
   receiptData,
@@ -36,7 +37,11 @@ export const useEventHistory = ({
 
   const publicClient = usePublicClient();
 
-  const goLuksMeAddress = useGoLuksMeAddress();
+  const contracts = deployedContracts as GenericContractsDeclaration | null;
+  const chainId = hardhat.id;
+  const deployedContractsOnChain = contracts ? contracts[chainId] : {};
+  const contract = deployedContractsOnChain["CrowdFund"];
+  const contractAddress = contract.address;
 
   useEffect(() => {
     async function readEvents() {
@@ -50,7 +55,7 @@ export const useEventHistory = ({
         ) as AbiEvent;
 
         const logs = await publicClient.getLogs({
-          address: goLuksMeAddress,
+          address: contractAddress,
           event,
           fromBlock,
         });
@@ -74,13 +79,11 @@ export const useEventHistory = ({
     }
 
     readEvents();
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     publicClient,
     fromBlock,
     eventName,
-    goLuksMeAddress,
+    contractAddress,
     blockData,
     transactionData,
     receiptData,

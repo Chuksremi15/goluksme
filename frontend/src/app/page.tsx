@@ -1,14 +1,13 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { useAccount, useBlockNumber } from "wagmi";
 import { PageWrapper } from "./components/PageWrapper";
 import { CampaignEvent, FundraiserCard } from "./components/FundraiserCard";
 import { useEventHistory } from "./hook/useEventHistory";
 import { Spinner } from "@heroui/react";
 
-const page = () => {
-  const { data: currentBlock } = useBlockNumber();
+const Page = () => {
+  // const { data: currentBlock } = useBlockNumber();
 
   const { data, isLoading, error } = useEventHistory({
     eventName: "CampaignCreated",
@@ -60,4 +59,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;

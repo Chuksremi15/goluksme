@@ -1,11 +1,6 @@
 import { getParsedError } from "../utils/getParsedError";
 import { useState } from "react";
-import {
-  Hash,
-  SendTransactionParameters,
-  TransactionReceipt,
-  WalletClient,
-} from "viem";
+import { Hash, SendTransactionParameters, TransactionReceipt } from "viem";
 import * as chains from "viem/chains";
 import { Config, useAccount, usePublicClient, useWalletClient } from "wagmi";
 import { SendTransactionMutate } from "wagmi/query";
@@ -61,9 +56,7 @@ interface UseTransactorReturn {
  * @param _walletClient - Optional wallet client to use. If not provided, will use the one from useWalletClient.
  * @returns function that takes in transaction function as callback, shows UI feedback for transaction and returns a promise of the transaction hash
  */
-export const useTransactor = (
-  _walletClient?: WalletClient
-): UseTransactorReturn => {
+export const useTransactor = (): UseTransactorReturn => {
   const { chainId } = useAccount();
   const { data: walletClient } = useWalletClient();
   const publicClient = usePublicClient();

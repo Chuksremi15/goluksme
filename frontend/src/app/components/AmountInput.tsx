@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useState } from "react";
 import { formatUnits, parseUnits } from "viem";
 
 export interface AmountInputProps {
@@ -20,8 +20,6 @@ export const AmountInput: React.FC<AmountInputProps> = ({
   onAmountChangeAction,
   min = 0n,
   max,
-  isCard = false,
-  stableCoinSymbol,
 }) => {
   const [inputAmount, setInputAmount] = useState<string>(
     amount ? formatUnits(amount, decimals) : ""

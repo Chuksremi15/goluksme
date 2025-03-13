@@ -1,6 +1,10 @@
 import axios from "axios";
 
-export const createCampaignData = async (formData: any): Promise<any> => {
+export const createCampaignData = async (formData: {
+  address: `0x${string}` | undefined;
+  description: string;
+  imgurl: string;
+}): Promise<any> => {
   try {
     const response = await axios.post<any>("/api/campaign/create", formData);
 

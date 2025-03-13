@@ -1,6 +1,5 @@
 import { Button, Modal, ModalContent, useDisclosure } from "@heroui/react";
 import { WalletIcon } from "@web3icons/react";
-import Image from "next/image";
 import * as React from "react";
 import { useConnect } from "wagmi";
 
@@ -19,7 +18,7 @@ export function WalletOptions() {
       </Button>
       <Modal isOpen={isOpen} size={"xs"} onOpenChange={onOpenChange}>
         <ModalContent>
-          {(onClose: any) => (
+          {() => (
             <div className="px-2 py-8 bg-base-200  flex flex-col gap-y-4 text-center ">
               <div>
                 <h6 className="font-head text-xl text-black">Connect Wallet</h6>

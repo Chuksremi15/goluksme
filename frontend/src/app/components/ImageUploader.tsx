@@ -14,7 +14,7 @@ interface ImageUploaderProps {
   // uploadProgress: number;
   setFieldValue: (
     field: string,
-    value: any,
+    value: string,
     shouldValidate?: boolean
   ) =>
     | Promise<void>
@@ -30,9 +30,9 @@ interface ImageUploaderProps {
 
 export const ImageUploader: FC<ImageUploaderProps> = ({ setFieldValue }) => {
   const [file, setFile] = useState<File | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  const [, setError] = useState<string | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string>("");
-  const [uploadedImageUrl, setUploadedImageUrl] = useState<string>("");
+  const [, setUploadedImageUrl] = useState<string>("");
   const [isPreviewVisible, setIsPreviewVisible] = useState(false);
   const inputFileRef = useRef<HTMLInputElement>(null);
   const [uploadProgress, setUploadProgress] = useState<number>(0);

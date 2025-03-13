@@ -3,8 +3,15 @@ import { useWithdraw } from "../campaign/hook/useWithdraw";
 import { useCloseCampaign } from "../campaign/hook/useCloseCampaign";
 import { useRouter } from "next/navigation";
 import { formatEther } from "viem";
+import { AddSocial } from "./AddSocial";
 
-export const OwnerOptions = ({ balance }: { balance: bigint }) => {
+export const OwnerOptions = ({
+  balance,
+  dataId,
+}: {
+  balance: bigint;
+  dataId: string;
+}) => {
   const { withdraw, isLoading: isWithdrawLoading } = useWithdraw();
   const { closeCampaign, isLoading: isCloseCampaignLoading } =
     useCloseCampaign();
@@ -27,12 +34,7 @@ export const OwnerOptions = ({ balance }: { balance: bigint }) => {
         >
           Withdraw
         </Button>
-        <Button
-          size="sm"
-          className=" bg-white text-black flex font-medium justify-center items-center text-sm border px-4 font-body rounded-full border-gray-400 max-w-[150px] hover:bg-gray-200 cursor-pointer transition-all duration-500"
-        >
-          Add Social
-        </Button>
+        <AddSocial dataId={dataId} />
         <Button
           size="sm"
           onPress={async () => {

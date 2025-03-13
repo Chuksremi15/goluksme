@@ -1,17 +1,22 @@
 import { useState } from "react";
-import CrowdFundABI from "@/abis/CrowdFund.json";
 import { useAccount, usePublicClient, useWriteContract } from "wagmi";
-import { Address } from "viem";
-
-import useGoLuksMeAddress from "@/app/hook/useGoLuksMeAddress";
 import { useTransactor } from "@/app/hook/useTransactor";
 import { notification } from "@/app/components/utils/Notification";
+import deployedContracts from "../../../../contracts/deployedContracts";
+import { GenericContractsDeclaration } from "@/utils/scaffold-eth/contract";
+import { hardhat } from "viem/chains";
 
 export const useCloseCampaign = () => {
   const { writeContractAsync } = useWriteContract();
   const { result: writeTxn, isLoading: isTransactorLoading } = useTransactor();
   const publicClient = usePublicClient();
-  const contractAddress = useGoLuksMeAddress();
+
+  const contracts = deployedContracts as GenericContractsDeclaration | null;
+  const chainId = hardhat.id;
+  const deployedContractsOnChain = contracts ? contracts[chainId] : {};
+  const contract = deployedContractsOnChain["CrowdFund"];
+  const contractAddress = contract.address;
+
   const { address } = useAccount();
 
   const [isCloseLoading, setIsLoading] = useState(false);
@@ -27,8 +32,8 @@ export const useCloseCampaign = () => {
 
       setIsLoading(true);
       const { request } = await publicClient.simulateContract({
-        address: contractAddress as Address,
-        abi: CrowdFundABI,
+        address: contractAddress,
+        abi: contract.abi,
         functionName: "closeCampaign",
         account: address,
       });

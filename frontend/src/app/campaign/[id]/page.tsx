@@ -27,40 +27,21 @@ const Campaign: React.FC = () => {
   const {
     campaign: campaignData,
     isLoading,
-    error,
+
     isError: isGetCampaigError,
   } = useGetCampaign(
     typeof id === "string" ? `0x${BigInt(id).toString(16)}` : "0x0"
   );
 
-  const {
-    data,
-    isLoading: isDataLoading,
-    error: isDataError,
-  } = useGetCampaignData(campaignData?.dataId ?? "");
+  const { data, isLoading: isDataLoading } = useGetCampaignData(
+    campaignData?.dataId ?? ""
+  );
 
-  const {
-    data: balance,
-    isLoading: isBalanceLoading,
-    isError,
-  } = useBalance({
+  const { data: balance } = useBalance({
     address: address,
   });
 
-  const {
-    donate,
-    isLoading: isDonateLoading,
-    isError: isDonateError,
-    error: donateError,
-  } = useDonate();
-
-  console.log(123456789);
-
-  console.log(
-    campaignData?.totalDonations && campaignData?.totalWithdrawn
-      ? campaignData.totalDonations - campaignData.totalWithdrawn
-      : 0n
-  );
+  const { donate, isLoading: isDonateLoading } = useDonate();
 
   if (isLoading || isDataLoading) {
     return (
@@ -87,6 +68,7 @@ const Campaign: React.FC = () => {
         {campaignData && address == campaignData?.owner && (
           <OwnerOptions
             balance={campaignData.totalDonations - campaignData.totalWithdrawn}
+            dataId={campaignData.dataId}
           />
         )}
 
@@ -108,10 +90,12 @@ const Campaign: React.FC = () => {
 
         <CollapsibleParagraph text={data.description} />
 
-        {data.socialMedia && (
-          <p className="text-sm  text-gray-600 mt-2 underline cursor-pointer">
-            View post on social media
-          </p>
+        {data.socialMediaLink && (
+          <a href={data.socialMediaLink} target="_blank">
+            <p className="text-sm  text-gray-600 mt-2 underline cursor-pointer">
+              View post on social media
+            </p>
+          </a>
         )}
 
         <div className="mt-4 flex relative ">

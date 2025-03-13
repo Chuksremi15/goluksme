@@ -1,24 +1,35 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import {
   useAccount,
   usePublicClient,
   useReadContract,
   useWriteContract,
 } from "wagmi";
-import { Address, erc20Abi, formatEther, formatUnits, zeroAddress } from "viem";
-
-import useGoLuksMeAddress from "@/app/hook/useGoLuksMeAddress";
-import { TokenBalance } from "./fetchTokensBalance";
+import { Address, erc20Abi, zeroAddress } from "viem";
 import { useTransactor } from "@/app/hook/useTransactor";
 import { notification } from "@/app/components/utils/Notification";
+import deployedContracts from "../../../../contracts/deployedContracts";
+import { GenericContractsDeclaration } from "@/utils/scaffold-eth/contract";
+import { hardhat } from "viem/chains";
 
-const useApprove = (token: TokenBalance, amount: bigint) => {
+const useApprove = (
+  token: {
+    balance: bigint;
+    address: Address;
+  },
+  amount: bigint
+) => {
   const { writeContractAsync } = useWriteContract();
   const { result: writeTxn } = useTransactor();
 
   const publicClient = usePublicClient();
 
-  const contractAddress = useGoLuksMeAddress();
+  const contracts = deployedContracts as GenericContractsDeclaration | null;
+  const chainId = hardhat.id;
+  const deployedContractsOnChain = contracts ? contracts[chainId] : {};
+  const contract = deployedContractsOnChain["CrowdFund"];
+  const contractAddress = contract.address;
+
   const { address } = useAccount();
 
   const [isApproved, setIsApproved] = useState(false);
