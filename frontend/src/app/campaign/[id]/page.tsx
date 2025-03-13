@@ -18,6 +18,7 @@ import { useDonate } from "../hook/useDonate";
 import { Share } from "@/app/components/Share";
 import { notification } from "@/app/components/utils/Notification";
 import { OwnerOptions } from "@/app/components/OwnerOptions";
+import { Profile } from "@/app/components/Profile";
 
 const Campaign: React.FC = () => {
   const { id } = useParams();
@@ -72,9 +73,12 @@ const Campaign: React.FC = () => {
           />
         )}
 
-        <div className="ml-auto w-32">
-          {campaignData && address == campaignData?.owner && (
-            <CopyableAddress address={campaignData.owner} />
+        <div className="ml-auto ">
+          {campaignData?.owner && (
+            <div className="flex justify-between items-top">
+              <Profile address={campaignData.owner} showName={true} />
+              <CopyableAddress address={campaignData.owner} />
+            </div>
           )}
         </div>
         <div className="">
