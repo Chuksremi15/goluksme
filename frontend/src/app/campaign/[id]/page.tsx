@@ -64,7 +64,7 @@ const Campaign: React.FC = () => {
 
   return (
     <PageWrapper>
-      <div className="mt-2 shadow rounded-lg px-6 pt-4 pb-2 text-black relative">
+      <div className="mt-2 shadow rounded-2xl px-6 pt-4 pb-6 text-black relative">
         {campaignData && address == campaignData?.owner && (
           <OwnerOptions
             balance={campaignData.totalDonations - campaignData.totalWithdrawn}
