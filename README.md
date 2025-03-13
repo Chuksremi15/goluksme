@@ -4,6 +4,14 @@
 
 [Watch Here](https://youtu.be/DQBD7JRlagw)
 
+## Project Link
+
+[Visit app on the grid](https://universaleverything.io/0x84707Cf6b623C7d77a2b32f022e67F6Bb7cB1eB2)
+
+## Project Link
+
+[Visit app on web](https://golyxme.vercel.app/)
+
 ## Overview
 
 Crowdfunding can become more seamless and attract on-chain donors, increasing reach and spread for genuine causes.
