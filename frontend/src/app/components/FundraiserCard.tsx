@@ -54,7 +54,7 @@ export const FundraiserCard: React.FC<FundraiserCardProps> = ({ campaign }) => {
                   </span>
                   <span className="text-sm font-medium text-gray-700">
                     {campaignData && formatEther(campaignData.totalDonations)}{" "}
-                    LYS
+                    LYX
                   </span>
                 </div>
                 <div className="flex justify-between">
@@ -62,7 +62,7 @@ export const FundraiserCard: React.FC<FundraiserCardProps> = ({ campaign }) => {
                     Target
                   </span>
                   <span className="text-sm font-medium text-gray-700">
-                    {campaignData && formatEther(campaignData.target)} LYS
+                    {campaignData && formatEther(campaignData.target)} LYX
                   </span>
                 </div>
                 <div className="w-full bg-gray-200 rounded-full h-2.5">

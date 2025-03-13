@@ -24,10 +24,6 @@ export const SelectChain = () => {
 
   // Automatically switch to Lukso on mount
   useEffect(() => {
-    console.log("isConnected:", isConnected);
-    console.log("Current Chain ID:", chain?.id);
-    console.log("switchChainAsync exists:", !!switchChainAsync);
-
     if (isConnected) {
       switchToLukso();
     }

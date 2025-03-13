@@ -17,8 +17,6 @@ const Page = () => {
     receiptData: true,
   });
 
-  console.log("data", data);
-
   const [campaigns, setCampaigns] = useState<CampaignEvent[]>([]);
 
   useEffect(() => {

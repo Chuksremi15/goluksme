@@ -56,6 +56,10 @@ const config: HardhatUserConfig = {
         enabled: process.env.MAINNET_FORKING_ENABLED === "true",
       },
     },
+    lukso: {
+      url: `https://rpc.mainnet.lukso.network`,
+      accounts: [deployerPrivateKey],
+    },
     mainnet: {
       url: `https://eth-mainnet.alchemyapi.io/v2/${providerApiKey}`,
       accounts: [deployerPrivateKey],

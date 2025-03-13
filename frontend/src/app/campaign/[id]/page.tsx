@@ -102,12 +102,12 @@ const Campaign: React.FC = () => {
           <div>
             <h3 className="font-head text-2xl">
               {" "}
-              {campaignData && formatEther(campaignData.totalDonations)} LYS
+              {campaignData && formatEther(campaignData.totalDonations)} LYX
               raised
             </h3>
             <h3 className="font-body text-base">
               {" "}
-              {campaignData && formatEther(campaignData.target)} LYS target
+              {campaignData && formatEther(campaignData.target)} LYX target
             </h3>
           </div>
           <div className="relative ml-auto h-[65px] w-[65px]">

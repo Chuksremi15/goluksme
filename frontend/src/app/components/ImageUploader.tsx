@@ -108,7 +108,7 @@ export const ImageUploader: FC<ImageUploaderProps> = ({ setFieldValue }) => {
           // Upload completed successfully
           const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
           setUploadedImageUrl(downloadURL);
-          console.log("File uploaded successfully:", downloadURL);
+
           setFieldValue("imgUrl", downloadURL);
           setIsLoading(false);
         }
@@ -170,7 +170,6 @@ export const ImageUploader: FC<ImageUploaderProps> = ({ setFieldValue }) => {
                 className=" bg-white text-black flex font-medium justify-center items-center text-sm border px-6 w-[100px] font-body rounded-full border-gray-400 max-w-[150px] hover:bg-gray-200 cursor-pointer transition-all duration-500"
                 onPress={() => {
                   file && uploadToFirebase(file);
-                  console.log("Upload Button clicked");
                 }}
                 isLoading={isLoading}
                 disabled={isLoading}

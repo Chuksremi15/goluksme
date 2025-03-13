@@ -1,0 +1,39 @@
+{
+  "language": "Solidity",
+  "sources": {
+    "contracts/CrowdFund.sol": {
+      "content": "// SPDX-License-Identifier: UNLICENSED\npragma solidity >=0.8.0 <0.9.0;\n\nimport \"./utils/Initializable.sol\";\n\ncontract CrowdFund is Initializable {\n    struct Campaign {\n        address owner;\n        string title;\n        string dataId;\n        uint target;\n        uint totalDonations;\n        uint totalWithdrawn;\n        uint donationCount;\n    }\n\n    mapping(address => Campaign) public campaigns;\n\n    address public protocolWallet;\n\n    event CampaignCreated(string dataId, address indexed owner, string title, uint target);\n    event CampaignClosed(\n        address indexed owner,\n        string title,\n        string dataId,\n        uint target,\n        uint totalDonations,\n        uint totalWithdrawn\n    );\n    event Donated(address indexed owner, address indexed donor, uint amount);\n    event Withdrawn(address indexed owner, uint amount);\n\n    function initialize(address protocolWallet_) public initializer {\n        protocolWallet = protocolWallet_;\n    }\n\n    function createCampaign(string memory _title, string memory _dataId, uint _target) external {\n        require(campaigns[msg.sender].owner == address(0), \"You already have a campaign\");\n\n        require(bytes(_title).length > 0, \"Title cannot be empty\");\n        require(bytes(_dataId).length > 0, \"Data ID cannot be empty\");\n        require(_target > 0, \"Target must be greater than zero\");\n\n        Campaign storage newCampaign = campaigns[msg.sender];\n        newCampaign.owner = msg.sender;\n        newCampaign.title = _title;\n        newCampaign.dataId = _dataId;\n        newCampaign.target = _target;\n        newCampaign.donationCount = 0;\n\n        emit CampaignCreated(_dataId, msg.sender, _title, _target);\n    }\n\n    function donate(address _owner) external payable {\n        Campaign storage campaign = campaigns[_owner];\n        require(campaign.owner != address(0), \"Campaign does not exist\");\n        require(msg.value > 0, \"Must send LKS\");\n\n        campaign.totalDonations += msg.value;\n        campaign.donationCount++;\n\n        emit Donated(_owner, msg.sender, msg.value);\n    }\n\n    function withdraw() external {\n        Campaign storage campaign = campaigns[msg.sender];\n        require(campaign.owner != address(0), \"Campaign does not exist\");\n\n        uint amount = campaign.totalDonations - campaign.totalWithdrawn;\n\n        require(amount > 0, \"cannot withdraw 0\");\n\n        uint fee = (amount * 30) / 10000;\n        uint amountAfterFee = amount - fee;\n\n        campaign.totalWithdrawn += amount;\n\n        (bool feeSent, ) = payable(protocolWallet).call{ value: fee }(\"\");\n        require(feeSent, \"Failed to send fee\");\n\n        (bool sent, ) = payable(campaign.owner).call{ value: amountAfterFee }(\"\");\n        require(sent, \"Failed to send funds\");\n\n        emit Withdrawn(msg.sender, amount);\n    }\n\n    function closeCampaign() external {\n        Campaign storage campaign = campaigns[msg.sender];\n        require(campaign.owner != address(0), \"Campaign does not exist\");\n\n        uint remainingAmount = campaign.totalDonations - campaign.totalWithdrawn;\n        if (remainingAmount > 0) {\n            uint fee = (remainingAmount * 30) / 10000;\n            uint amountAfterFee = remainingAmount - fee;\n\n            campaign.totalWithdrawn += remainingAmount;\n\n            (bool feeSent, ) = payable(protocolWallet).call{ value: fee }(\"\");\n            require(feeSent, \"Failed to send fee\");\n\n            (bool sent, ) = payable(campaign.owner).call{ value: amountAfterFee }(\"\");\n            require(sent, \"Failed to send funds\");\n\n            emit Withdrawn(msg.sender, remainingAmount);\n        }\n\n        emit CampaignClosed(\n            msg.sender,\n            campaign.title,\n            campaign.dataId,\n            campaign.target,\n            campaign.totalDonations,\n            campaign.totalWithdrawn\n        );\n\n        delete campaigns[msg.sender];\n    }\n\n    function getCampaign(\n        address _owner\n    )\n        external\n        view\n        returns (\n            address owner,\n            string memory title,\n            string memory dataId,\n            uint target,\n            uint totalDonations,\n            uint totalWithdrawn,\n            uint donationCount\n        )\n    {\n        Campaign storage campaign = campaigns[_owner];\n\n        require(campaign.owner != address(0), \"Campaign does not exist\");\n\n        return (\n            campaign.owner,\n            campaign.title,\n            campaign.dataId,\n            campaign.target,\n            campaign.totalDonations,\n            campaign.totalWithdrawn,\n            campaign.donationCount\n        );\n    }\n}\n"
+    },
+    "contracts/utils/Initializable.sol": {
+      "content": "// SPDX-License-Identifier: GPL-2.0-or-later\npragma solidity ^0.8.0;\n\nabstract contract Initializable {\n    bool private _initialized;\n\n    bool private _initializing;\n\n    modifier initializer() {\n        require(\n            _initializing || !_initialized,\n            \"Initializable: contract is already initialized\"\n        );\n\n        bool isTopLevelCall = !_initializing;\n        if (isTopLevelCall) {\n            _initializing = true;\n            _initialized = true;\n        }\n\n        _;\n\n        if (isTopLevelCall) {\n            _initializing = false;\n        }\n    }\n}\n"
+    }
+  },
+  "settings": {
+    "optimizer": {
+      "enabled": true,
+      "runs": 200
+    },
+    "evmVersion": "paris",
+    "outputSelection": {
+      "*": {
+        "*": [
+          "abi",
+          "evm.bytecode",
+          "evm.deployedBytecode",
+          "evm.methodIdentifiers",
+          "metadata",
+          "devdoc",
+          "userdoc",
+          "storageLayout",
+          "evm.gasEstimates"
+        ],
+        "": [
+          "ast"
+        ]
+      }
+    },
+    "metadata": {
+      "useLiteralContent": true
+    }
+  }
+}

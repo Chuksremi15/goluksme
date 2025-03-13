@@ -66,7 +66,6 @@ const Page = () => {
         const response = await createCampaignData(formData);
 
         if (response) {
-          console.log("response", response);
           const dataId = response.campaign._id;
           const target = prop.target.toString();
           const parsedTarget = parseEther(target);
@@ -82,7 +81,6 @@ const Page = () => {
         if (error instanceof Error) {
           notification.error({ message: error.message });
         } else {
-          console.log("An unknown error occurred");
         }
       }
     },

@@ -38,8 +38,6 @@ export async function POST(req: Request) {
       const status = error.response?.status || 500;
       const message = error.response?.data?.message || error.message;
 
-      console.log("error", error.response?.data?.message);
-
       return NextResponse.json(
         { message: `Request failed: ${message}` },
         { status }

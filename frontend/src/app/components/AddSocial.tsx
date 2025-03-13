@@ -44,7 +44,6 @@ export const AddSocial = ({ dataId }: { dataId: string }) => {
         if (error instanceof Error) {
           notification.error({ message: error.message });
         } else {
-          console.log("An unknown error occurred");
         }
       }
     },

@@ -1,6 +1,6 @@
 import { Address } from "viem";
 import { useReadContract } from "wagmi";
-import { hardhat } from "viem/chains";
+import { lukso } from "viem/chains";
 import deployedContracts from "../../../../contracts/deployedContracts";
 import { GenericContractsDeclaration } from "@/utils/scaffold-eth/contract";
 
@@ -23,7 +23,7 @@ interface UseGetCampaignReturn {
 
 export function useGetCampaign(owner: Address): UseGetCampaignReturn {
   const contracts = deployedContracts as GenericContractsDeclaration | null;
-  const chainId = hardhat.id;
+  const chainId = lukso.id;
   const deployedContractsOnChain = contracts ? contracts[chainId] : {};
   const contract = deployedContractsOnChain["CrowdFund"];
   const contractAddress = contract.address;

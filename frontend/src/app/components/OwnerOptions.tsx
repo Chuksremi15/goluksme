@@ -21,7 +21,7 @@ export const OwnerOptions = ({
   return (
     <div className="py-4">
       <h3 className="font-body text-base">
-        Balance: {formatEther(balance)} LYS
+        Balance: {formatEther(balance)} LYX
       </h3>
       <div className="flex  gap-x-2 mt-1">
         <Button

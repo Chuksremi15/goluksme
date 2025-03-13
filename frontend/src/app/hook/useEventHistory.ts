@@ -4,7 +4,7 @@ import { Abi, AbiEvent, BlockTag } from "viem";
 import { usePublicClient } from "wagmi";
 import deployedContracts from "../../../contracts/deployedContracts";
 import { GenericContractsDeclaration } from "@/utils/scaffold-eth/contract";
-import { hardhat } from "viem/chains";
+import { lukso } from "viem/chains";
 
 /**
  * @dev reads events from a deployed contract
@@ -38,7 +38,7 @@ export const useEventHistory = ({
   const publicClient = usePublicClient();
 
   const contracts = deployedContracts as GenericContractsDeclaration | null;
-  const chainId = hardhat.id;
+  const chainId = lukso.id;
   const deployedContractsOnChain = contracts ? contracts[chainId] : {};
   const contract = deployedContractsOnChain["CrowdFund"];
   const contractAddress = contract.address;

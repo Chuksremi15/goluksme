@@ -4,7 +4,7 @@ import { useTransactor } from "@/app/hook/useTransactor";
 import { notification } from "@/app/components/utils/Notification";
 import deployedContracts from "../../../../contracts/deployedContracts";
 import { GenericContractsDeclaration } from "@/utils/scaffold-eth/contract";
-import { hardhat } from "viem/chains";
+import { lukso } from "viem/chains";
 import { Address } from "viem";
 
 export const useWithdraw = () => {
@@ -13,7 +13,7 @@ export const useWithdraw = () => {
   const publicClient = usePublicClient();
 
   const contracts = deployedContracts as GenericContractsDeclaration | null;
-  const chainId = hardhat.id;
+  const chainId = lukso.id;
   const deployedContractsOnChain = contracts ? contracts[chainId] : {};
   const contract = deployedContractsOnChain["CrowdFund"];
   const contractAddress = contract.address;
