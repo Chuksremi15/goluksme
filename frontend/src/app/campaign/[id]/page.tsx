@@ -28,10 +28,11 @@ const Campaign: React.FC = () => {
   const {
     campaign: campaignData,
     isLoading,
-
     isError: isGetCampaigError,
   } = useGetCampaign(
-    typeof id === "string" ? `0x${BigInt(id).toString(16)}` : "0x0"
+    id && /^0x[a-fA-F0-9]{40}$/.test(id.toString())
+      ? (id.toString() as `0x${string}`)
+      : ("0x0" as `0x${string}`)
   );
 
   const { data, isLoading: isDataLoading } = useGetCampaignData(

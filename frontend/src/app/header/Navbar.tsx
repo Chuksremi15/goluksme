@@ -9,7 +9,7 @@ import { Button } from "@heroui/react";
 import Logo from "../assets/logo.svg";
 
 export function Navbar() {
-  const { address } = useAccount();
+  const { address, isConnected } = useAccount();
 
   return (
     <div
@@ -36,14 +36,16 @@ export function Navbar() {
             Start Campaign
           </Button>
         </Link>
-        <Link href={`/campaign/${address}`}>
-          <Button
-            size="sm"
-            className="ml-auto  bg-white text-black flex font-medium justify-center items-center text-sm border px-4 font-body rounded-full border-gray-400 max-w-[140px] hover:bg-gray-200 cursor-pointer transition-all duration-500"
-          >
-            My Campaign
-          </Button>
-        </Link>
+        {isConnected && (
+          <Link href={`/campaign/${address}`}>
+            <Button
+              size="sm"
+              className="ml-auto  bg-white text-black flex font-medium justify-center items-center text-sm border px-4 font-body rounded-full border-gray-400 max-w-[140px] hover:bg-gray-200 cursor-pointer transition-all duration-500"
+            >
+              My Campaign
+            </Button>
+          </Link>
+        )}
       </div>
     </div>
   );

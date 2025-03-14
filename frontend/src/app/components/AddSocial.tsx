@@ -58,7 +58,6 @@ export const AddSocial = ({ dataId }: { dataId: string }) => {
       >
         Add Social
       </Button>
-
       <Modal isOpen={isOpen} size={"sm"} onOpenChange={onOpenChange}>
         <ModalContent>
           {() => (
