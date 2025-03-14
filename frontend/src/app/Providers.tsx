@@ -6,6 +6,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { wagmiConfig } from "@/config/wagmiConfig";
 import { HeroUIProvider } from "@heroui/react";
 import { Toaster } from "react-hot-toast";
+import { UPProvider } from "@/contexts/UPProviderContext";
 
 type ProvidersProps = {
   children: ReactNode;
@@ -18,10 +19,12 @@ const Providers = ({ children, initialState }: ProvidersProps) => {
   return (
     <WagmiProvider config={wagmiConfig} initialState={initialState}>
       <QueryClientProvider client={queryClient}>
-        <HeroUIProvider>
-          {children}
-          <Toaster />
-        </HeroUIProvider>
+        <UPProvider>
+          <HeroUIProvider>
+            {children}
+            <Toaster />
+          </HeroUIProvider>
+        </UPProvider>
       </QueryClientProvider>
     </WagmiProvider>
   );
