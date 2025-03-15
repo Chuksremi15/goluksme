@@ -12,6 +12,10 @@
 
 [Visit app on web](https://golyxme.vercel.app/)
 
+## Architecture
+
+![Campaign UML Diagram](./frontend/public/img/campaign.svg)
+
 ## Overview
 
 Crowdfunding can become more seamless and attract on-chain donors, increasing reach and spread for genuine causes.
