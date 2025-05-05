@@ -6,15 +6,21 @@ import {
   DropdownMenu,
   DropdownTrigger,
 } from "@heroui/react";
-import { useAccount, useDisconnect } from "wagmi";
+import { useAccount, useChainId, useDisconnect } from "wagmi";
 import { truncateAddress } from "../utils/helpers";
 import { MdOutlineKeyboardArrowDown } from "react-icons/md";
 import axios from "axios";
 import { useEffect } from "react";
+import { useChainMonitor } from "./useChainMonitor";
+import { switchOrAddChain } from "./useChainSwitch";
 
 export function Account() {
   const { address } = useAccount();
   const { disconnect } = useDisconnect();
+
+  const chainId = useChainId();
+
+  const walletNetworkChain = useChainMonitor();
 
   useEffect(() => {
     const login = async () => {
@@ -45,6 +51,55 @@ export function Account() {
     logout(); // Delete the JWT when the wallet is disconnected
     disconnect(); // Disconnect the wallet
   };
+
+  const handleSwitchChain = async () => {
+    await switchOrAddChain({
+      chainId: "0x1069", // 4201 in hex
+      chainName: "LUKSO Testnet",
+      rpcUrls: ["https://rpc.testnet.lukso.network"],
+      blockExplorerUrls: ["https://explorer.execution.testnet.lukso.network"],
+      nativeCurrency: {
+        name: "LUKSO",
+        symbol: "LYXt",
+        decimals: 18,
+      },
+    });
+  };
+
+  if (walletNetworkChain !== chainId) {
+    return (
+      <Dropdown>
+        <DropdownTrigger>
+          <div className="w-[150px] flex items-center justify-center cursor-pointer  rounded-full   bg-rose-500 text-white">
+            <p className="my-auto text-sm" data-testid="walletAddress">
+              Wrong Network
+            </p>
+            <MdOutlineKeyboardArrowDown size={"30px"} />
+          </div>
+        </DropdownTrigger>
+        <DropdownMenu
+          aria-label="Static Actions"
+          color={"default"}
+          variant={"flat"}
+        >
+          <DropdownItem
+            onPress={handleSwitchChain}
+            key="disconect"
+            className="text-danger text-center border border-gray-400 font-body  rounded-full"
+          >
+            Switch Chain
+          </DropdownItem>
+          <DropdownItem
+            onPress={handleDisconnect}
+            key="disconect"
+            className="text-danger text-center border border-gray-400 font-body  rounded-full"
+          >
+            Disconnect
+          </DropdownItem>
+        </DropdownMenu>
+      </Dropdown>
+    );
+  }
 
   return (
     <Dropdown>

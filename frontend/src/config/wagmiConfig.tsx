@@ -11,17 +11,17 @@ const MetaMaskOptions = {
   },
 };
 
-const chainsObj: readonly [chains.Chain] = [chains.lukso];
+const chainsObj: readonly [chains.Chain] = [chains.luksoTestnet];
 
 const RPC_CHAIN_NAMES: Record<number, string> = {
-  [chains.lukso.id]: "lukso-mainnet",
+  [chains.luksoTestnet.id]: "lukso-testnet",
 };
 
 export const getHttpUrl = (chainId: number) => {
   const rpcChainName = RPC_CHAIN_NAMES[chainId];
   if (!rpcChainName) return undefined;
 
-  return `https://rpc.mainnet.lukso.network`;
+  return `https://rpc.testnet.lukso.network`;
 };
 
 export const wagmiConfig = createConfig({

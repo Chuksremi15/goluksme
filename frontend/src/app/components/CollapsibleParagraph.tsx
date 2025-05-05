@@ -13,11 +13,15 @@ export const CollapsibleParagraph = ({
 
   return (
     <div>
-      <p className="text-sm text-gray-600 mt-2 font-body">
+      <div className="text-base text-gray-600 mt-2 font-body flex flex-col gap-y-1">
         {isExpanded
-          ? text
+          ? text.split("\n").map((line, i) => (
+              <p className="" key={i}>
+                {line}
+              </p>
+            ))
           : text.slice(0, maxLength) + (text.length > maxLength ? "..." : "")}
-      </p>
+      </div>
 
       {text.length > maxLength && (
         <button

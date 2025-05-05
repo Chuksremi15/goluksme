@@ -4,7 +4,6 @@ import Link from "next/link";
 import * as React from "react";
 import { ConnectWallet } from "./ConnectWallet";
 import { useAccount } from "wagmi";
-import { SelectChain } from "./SelectChain";
 import { Button } from "@heroui/react";
 import Logo from "../assets/logo.svg";
 

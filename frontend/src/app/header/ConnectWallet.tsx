@@ -9,6 +9,7 @@ import { Account } from "./Account";
 
 export function ConnectWallet() {
   const { isConnected } = useAccount();
+
   return (
     <Suspense fallback={<Loading />}>
       {isConnected ? <Account /> : <WalletOptions />}
