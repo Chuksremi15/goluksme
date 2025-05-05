@@ -27,14 +27,6 @@ export function Navbar() {
           {/* <SelectChain /> */}
           <ConnectWallet />
         </div>
-        <Link href="/create">
-          <Button
-            size="sm"
-            className="ml-auto bg-white text-black flex font-medium justify-center items-center text-sm border px-4 font-body rounded-full border-gray-400 max-w-[140px] hover:bg-gray-200 cursor-pointer transition-all duration-500"
-          >
-            Start Campaign
-          </Button>
-        </Link>
         {isConnected && (
           <Link href={`/campaign/${address}`}>
             <Button
@@ -45,6 +37,14 @@ export function Navbar() {
             </Button>
           </Link>
         )}
+        <Link href="/create">
+          <Button
+            size="sm"
+            className="ml-auto bg-white text-black flex font-medium justify-center items-center text-sm border px-4 font-body rounded-full border-gray-400 max-w-[140px] hover:bg-gray-200 cursor-pointer transition-all duration-500"
+          >
+            Start Campaign
+          </Button>
+        </Link>
       </div>
     </div>
   );
